@@ -1,72 +1,59 @@
-# טבק סטור — Generative Engine Optimization Map
-
-> A smoking products catalog website featuring a comprehensive range of smoking accessories and tobacco products. The business offers rolling paper filters, rolling papers, lighters, rolling machines, rolling tobacco, cigarettes, and electronic cigarettes, serving as a complete one-stop shop for smoking enthusiasts and retailers.
+# Business — Generative Engine Optimization Map
 
 ---
 
 ## Pages
 
 ### בית
-https://tabak-store.zappy5.app
+https://tobacco-store.co.il
 קטלוג מוצרי עישון מקיף: ניירות גלגול, מצתים, מכונות גלגול, סיגריות אלקטרוניות וטבק גלגול. כל מה שמעשן צריך במקום אחד עם משלוח מהיר!
 
 ### אודות
-https://tabak-store.zappy5.app/about
+https://tobacco-store.co.il/about
 למעלה משנות ניסיון באספקת מוצרי עישון איכותיים. אנחנו מתמחים בניירות גלגול, מכונות גלגול וסיגריות אלקטרוניות למעשנים ולקמעונאים ברחבי הארץ.
 
 ### מדריכים
-https://tabak-store.zappy5.app/guides
+https://tobacco-store.co.il/guides
 למדו איך לבחור ניירות גלגול, להשתמש במכונת גלגול סיגריות אוטומטית ולתחזק מצתים. מדריכים מפורטים למעשנים מתחילים ומתקדמים עם טיפים מקצועיים.
 
 ### צור קשר
-https://tabak-store.zappy5.app/contact
+https://tobacco-store.co.il/contact
 צרו קשר לייעוץ מקצועי והזמנת מצתים, ניירות גלגול ומכונות גלגול. שירות אישי למעשנים ולבעלי עסקים, משלוחים לכל הארץ ומענה מהיר!
 
 ### Products
-https://tabak-store.zappy5.app/products
+https://tobacco-store.co.il/products
 המוצרים שלנו - טבק סטור
 
 ### Product Detail
-https://tabak-store.zappy5.app/product/:slug
+https://tobacco-store.co.il/product/:slug
 פרטי המוצר - טבק סטור
 
 ### Category
-https://tabak-store.zappy5.app/category/:slug
+https://tobacco-store.co.il/category/:slug
 מוצרים - טבק סטור
 
 ## Legal & Policy
 
 ### Privacy Policy
-https://tabak-store.zappy5.app/privacy
+https://tobacco-store.co.il/privacy
 Information about how user data is collected, stored, and protected.
 
 ### Terms & Conditions
-https://tabak-store.zappy5.app/terms
+https://tobacco-store.co.il/terms
 Legal terms describing service usage, rights, and policies.
 
 ### Accessibility Statement
-https://tabak-store.zappy5.app/accessibility
+https://tobacco-store.co.il/accessibility
 Information about WCAG compliance and accessibility features.
 
 ---
 
 # Business Context (for LLM understanding)
 
-## About טבק סטור
-A smoking products catalog website featuring a comprehensive range of smoking accessories and tobacco products. The business offers rolling paper filters, rolling papers, lighters, rolling machines, rolling tobacco, cigarettes, and electronic cigarettes, serving as a complete one-stop shop for smoking enthusiasts and retailers.
-
-## Target Audience
-- קהילת מעשנים כבדים
-- מעשנים צעירים
-- מעשנים פרימיום
-- מעשנים מזדמנים
-
-## Industry
-מוצרי עישון וטבק
-
+## About Business
 ---
 
 # Additional Resources
 
-- **Sitemap**: https://tabak-store.zappy5.app/sitemap.xml
-- **Robots.txt**: https://tabak-store.zappy5.app/robots.txt
+- **Sitemap**: https://tobacco-store.co.il/sitemap.xml
+- **Robots.txt**: https://tobacco-store.co.il/robots.txt
