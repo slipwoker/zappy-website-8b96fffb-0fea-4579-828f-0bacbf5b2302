@@ -7795,73 +7795,68 @@ async function loadRelatedProducts(currentProduct, t) {
         var mPos = img.getAttribute('data-zappy-mobile-object-position');
         var mZoomStr = img.getAttribute('data-zappy-mobile-zoom');
         var mZoom = parseFloat(mZoomStr);
-        var hasMobileOverrides = mPos || mZoomStr;
         if (mSrc) img.src = mSrc;
 
-        if (hasMobileOverrides) {
-          // User configured mobile zoom/position — apply zoom/crop math
-          // to match what the editor mobile preview shows.
-          wrapper.style.setProperty('width', '100%', 'important');
-          wrapper.style.setProperty('max-width', '100%', 'important');
-          wrapper.style.setProperty('overflow', 'hidden', 'important');
-          wrapper.style.setProperty('position', 'relative', 'important');
-          var _sW = parseFloat(wrapper.getAttribute('data-zappy-zoom-wrapper-width')) || 0;
-          var _sH = parseFloat(wrapper.getAttribute('data-zappy-zoom-wrapper-height')) || 0;
-          if (_sW > 0 && _sH > 0) {
-            wrapper.style.setProperty('aspect-ratio', _sW + '/' + _sH, 'important');
-            wrapper.style.setProperty('height', 'auto', 'important');
-          }
-          var effZoom = (isFinite(mZoom) && mZoom > 0) ? mZoom : zoom;
-          var effPos = mPos || '50% 50%';
+        wrapper.style.setProperty('width', '100%', 'important');
+        wrapper.style.setProperty('max-width', '100%', 'important');
+        wrapper.style.setProperty('overflow', 'hidden', 'important');
+        wrapper.style.setProperty('position', 'relative', 'important');
 
-          function applyMobileZoomCrop(_img, _wrapper, _effPos, _effZoom) {
-            var rect = _wrapper.getBoundingClientRect();
-            if (!rect || !rect.width || !rect.height) return;
-            var nW = _img.naturalWidth || 0, nH = _img.naturalHeight || 0;
-            if (!(nW > 0 && nH > 0)) return;
-            var imgA = nW / nH;
-            var contA = rect.width / rect.height;
-            var cover = coverPercents(imgA, contA);
-            var wP = 100, hP = 100;
-            if (_effZoom >= 1) { wP = cover.w * _effZoom; hP = cover.h * _effZoom; }
-            else { var t2 = (_effZoom - 0.5) / 0.5; if (!isFinite(t2)) t2 = 0; t2 = Math.max(0, Math.min(1, t2)); wP = 100 + t2 * (cover.w - 100); hP = 100 + t2 * (cover.h - 100); }
-            var p2 = parseObjPos(_effPos);
-            var lP = (100 - wP) * (p2.x / 100);
-            var tP = (100 - hP) * (p2.y / 100);
-            _img.style.setProperty('position', 'absolute', 'important');
-            _img.style.setProperty('left', lP + '%', 'important');
-            _img.style.setProperty('top', tP + '%', 'important');
-            _img.style.setProperty('width', wP + '%', 'important');
-            _img.style.setProperty('height', hP + '%', 'important');
-            _img.style.setProperty('max-width', 'none', 'important');
-            _img.style.setProperty('max-height', 'none', 'important');
-            _img.style.setProperty('display', 'block', 'important');
-            _img.style.setProperty('object-fit', _effZoom < 1 ? 'fill' : 'cover', 'important');
-            _img.style.setProperty('margin', '0', 'important');
-          }
+        var _sW = parseFloat(wrapper.getAttribute('data-zappy-zoom-wrapper-width')) || 0;
+        var _sH = parseFloat(wrapper.getAttribute('data-zappy-zoom-wrapper-height')) || 0;
+        if (_sW > 0 && _sH > 0) {
+          wrapper.style.setProperty('padding-bottom', '0', 'important');
+          wrapper.style.setProperty('aspect-ratio', _sW + '/' + _sH, 'important');
+          wrapper.style.setProperty('height', 'auto', 'important');
+        }
 
+        function applyMobileZoomCrop(_img, _wrapper, _effPos, _effZoom) {
+          var rect = _wrapper.getBoundingClientRect();
+          if (!rect || !rect.width || !rect.height) return;
+          var nW = _img.naturalWidth || 0, nH = _img.naturalHeight || 0;
+          if (!(nW > 0 && nH > 0)) return;
+          var imgA = nW / nH;
+          var contA = rect.width / rect.height;
+          var cover = coverPercents(imgA, contA);
+          var wP = 100, hP = 100;
+          if (_effZoom >= 1) { wP = cover.w * _effZoom; hP = cover.h * _effZoom; }
+          else { var t2 = (_effZoom - 0.5) / 0.5; if (!isFinite(t2)) t2 = 0; t2 = Math.max(0, Math.min(1, t2)); wP = 100 + t2 * (cover.w - 100); hP = 100 + t2 * (cover.h - 100); }
+          var p2 = parseObjPos(_effPos);
+          var lP = (100 - wP) * (p2.x / 100);
+          var tP = (100 - hP) * (p2.y / 100);
+          _img.style.setProperty('position', 'absolute', 'important');
+          _img.style.setProperty('left', lP + '%', 'important');
+          _img.style.setProperty('top', tP + '%', 'important');
+          _img.style.setProperty('width', wP + '%', 'important');
+          _img.style.setProperty('height', hP + '%', 'important');
+          _img.style.setProperty('max-width', 'none', 'important');
+          _img.style.setProperty('max-height', 'none', 'important');
+          _img.style.setProperty('display', 'block', 'important');
+          _img.style.setProperty('object-fit', _effZoom < 1 ? 'fill' : 'cover', 'important');
+          _img.style.setProperty('margin', '0', 'important');
+        }
+
+        var effZoom = (isFinite(mZoom) && mZoom > 0) ? mZoom : zoom;
+        var effPos = mPos || img.getAttribute('data-zappy-object-position') || img.style.objectPosition || '50% 50%';
+        if (_sW > 0 && _sH > 0) {
           applyMobileZoomCrop(img, wrapper, effPos, effZoom);
-
-          // If src changed, the image may not be loaded yet (naturalWidth=0).
-          // Re-apply after it loads so the zoom math uses correct dimensions.
-          if (mSrc && !(img.complete && img.naturalWidth > 0)) {
+          if (!(img.complete && img.naturalWidth > 0)) {
             img.addEventListener('load', function _onLoad() {
               img.removeEventListener('load', _onLoad);
               try { applyMobileZoomCrop(img, wrapper, effPos, effZoom); } catch(e) {}
             });
           }
-          return;
+        } else {
+          img.style.setProperty('position', 'relative', 'important');
+          img.style.setProperty('width', '100%', 'important');
+          img.style.setProperty('height', 'auto', 'important');
+          img.style.setProperty('max-width', '100%', 'important');
+          img.style.setProperty('display', 'block', 'important');
+          img.style.setProperty('object-fit', 'cover', 'important');
+          img.style.removeProperty('left');
+          img.style.removeProperty('top');
+          img.style.setProperty('margin', '0', 'important');
         }
-
-        img.style.setProperty('position', 'relative', 'important');
-        img.style.setProperty('width', '100%', 'important');
-        img.style.setProperty('height', 'auto', 'important');
-        img.style.setProperty('max-width', '100%', 'important');
-        img.style.setProperty('display', 'block', 'important');
-        img.style.setProperty('object-fit', 'cover', 'important');
-        img.style.removeProperty('left');
-        img.style.removeProperty('top');
-        img.style.setProperty('margin', '0', 'important');
         return;
       }
 
@@ -8703,7 +8698,14 @@ async function loadRelatedProducts(currentProduct, t) {
     var _vProduct = null;
     var _vT = {};
     var _initOvr = false;
-    function _oivs(){if(_initOvr)return;if(typeof window.initVariantSelection==='function')_initOvr=true;window.initVariantSelection=function(p,t){if(p&&p.variants&&p.variants.length>0){_vProduct=p;var tr=t||{};if(!tr.pleaseSelect){var rtl=document.documentElement.getAttribute('dir')==='rtl'||document.body.getAttribute('dir')==='rtl';tr.pleaseSelect=rtl?'נא לבחור':'Please select'}_vT=tr}}}
+    // Late-product safety: the page may call initVariantSelection AFTER our
+    // setTimeout(fixVariantSelection, 2000) has already fired (e.g. when the
+    // product API is slow on cold starts or large catalogs). In that case both
+    // scheduled calls bailed at the !product guard and never ran _repBtns or
+    // _autoSelectSingles. Re-trigger fixVariantSelection from inside the wrapper
+    // so the runtime fix runs once data finally arrives. Deferred via setTimeout
+    // so the page's own renderProductDetail finishes mutating the DOM first.
+    function _oivs(){if(_initOvr)return;if(typeof window.initVariantSelection==='function')_initOvr=true;window.initVariantSelection=function(p,t){if(p&&p.variants&&p.variants.length>0){_vProduct=p;var tr=t||{};if(!tr.pleaseSelect){var rtl=document.documentElement.getAttribute('dir')==='rtl'||document.body.getAttribute('dir')==='rtl';tr.pleaseSelect=rtl?'נא לבחור':'Please select'}_vT=tr;setTimeout(function(){try{fixVariantSelection()}catch(e){}},0)}}}
     _oivs();
 
     function _gv() { return _vProduct ? (_vProduct.variants||[]).filter(function(v){return v.is_active!==false}) : []; }
@@ -8778,6 +8780,55 @@ async function loadRelatedProducts(currentProduct, t) {
       var m=_fm(selectedAttributes);if(m.length>0&&m.every(function(v){return _oos(v)})){e.preventDefault();e.stopImmediatePropagation();return}
     },true);
 
+    // Repair variant button attributes that were truncated by the browser
+    // when the (pre-fix) renderProductDetail serialized values containing "
+    // (e.g. Hebrew "12  מ\"מ", US sizes 5'10") into data-value/data-display-value
+    // without HTML escaping. We rebuild data-value, data-display-value, and the
+    // visible text from _vProduct.variants[*].attributes (which is the unbroken
+    // source of truth from the API). Pairs buttons to values by index after
+    // applying the same sort renderProductDetail uses. Honors per-variant
+    // attributes_display (translated/aliased labels) the same way
+    // renderProductDetail's attributeDisplayMap does, so we don't replace a
+    // localized "12 inches" label with the raw value 12".
+    function _repBtns() {
+      if(!_vProduct||!_vProduct.variants)return;
+      var vs=_gv();if(vs.length===0)return;
+      var _so={'xxxs':0,'xxs':1,'xs':2,'s':3,'m':4,'l':5,'xl':6,'xxl':7,'2xl':7,'xxxl':8,'3xl':8,'4xl':9,'5xl':10};
+      function _cmp(a,b){var sa=_so[String(a).toLowerCase()],sb=_so[String(b).toLowerCase()];var na=sa===undefined?parseFloat(a):NaN,nb=sb===undefined?parseFloat(b):NaN;if(!isNaN(na)&&!isNaN(nb))return na-nb;if(sa!==undefined&&sb!==undefined)return sa-sb;var ca=!isNaN(na)?0:sa!==undefined?1:2,cb=!isNaN(nb)?0:sb!==undefined?1:2;if(ca!==cb)return ca-cb;return String(a).localeCompare(String(b));}
+      var dispMap={};
+      vs.forEach(function(v){
+        if(!v.attributes)return;
+        Object.keys(v.attributes).forEach(function(k){
+          var raw=v.attributes[k];
+          if(raw==null)return;
+          if(!dispMap[k])dispMap[k]={};
+          if(dispMap[k][raw]==null){
+            dispMap[k][raw]=(v.attributes_display&&Object.prototype.hasOwnProperty.call(v.attributes_display,k))?v.attributes_display[k]:raw;
+          }
+        });
+      });
+      document.querySelectorAll('.variant-group').forEach(function(grp){
+        var ak=grp.getAttribute('data-group');
+        if(!ak||ak==='variant')return;
+        var btns=Array.prototype.slice.call(grp.querySelectorAll('.variant-option'));
+        if(btns.length===0)return;
+        var seen={},vals=[];
+        vs.forEach(function(v){if(v.attributes&&Object.prototype.hasOwnProperty.call(v.attributes,ak)){var val=v.attributes[ak];if(val!=null&&!seen[val]){seen[val]=true;vals.push(val);}}});
+        if(vals.length===0||vals.length!==btns.length)return;
+        vals.sort(_cmp);
+        btns.forEach(function(btn,i){
+          var correct=String(vals[i]);
+          var current=btn.getAttribute('data-value')||'';
+          if(current===correct)return;
+          var disp=(dispMap[ak]&&dispMap[ak][vals[i]]!=null)?String(dispMap[ak][vals[i]]):correct;
+          btn.setAttribute('data-value',correct);
+          btn.setAttribute('data-display-value',disp);
+          if(!btn.classList.contains('color-swatch')){btn.textContent=disp;}
+          if(btn.title){btn.title=disp;}
+        });
+      });
+    }
+
     function fixVariantSelection() {
       _oivs();
       var product=_vProduct||window.currentProduct,t=_vT||window.productTranslations||{};
@@ -8787,6 +8838,7 @@ async function loadRelatedProducts(currentProduct, t) {
       _vProduct=product;if(!t.pleaseSelect){var isRTL=document.documentElement.getAttribute('dir')==='rtl'||document.body.getAttribute('dir')==='rtl';t.pleaseSelect=isRTL?'נא לבחור':'Please select'}_vT=t;
       var old=document.getElementById('zappy-variant-state-css');if(old)old.remove();
       document.querySelectorAll('.variant-option').forEach(function(b){b.style.display='';b.disabled=false});
+      _repBtns();
       var _so={'xxxs':0,'xxs':1,'xs':2,'s':3,'m':4,'l':5,'xl':6,'xxl':7,'2xl':7,'xxxl':8,'3xl':8,'4xl':9,'5xl':10};
       document.querySelectorAll('.variant-options').forEach(function(c){var b=Array.from(c.querySelectorAll('.variant-option'));if(b.length<2)return;b.sort(function(a,b){var va=a.getAttribute('data-value')||'',vb=b.getAttribute('data-value')||'';var sa=_so[va.toLowerCase()],sb=_so[vb.toLowerCase()];var na=sa===undefined?parseFloat(va):NaN,nb=sb===undefined?parseFloat(vb):NaN;if(!isNaN(na)&&!isNaN(nb))return na-nb;if(sa!==undefined&&sb!==undefined)return sa-sb;var ca=!isNaN(na)?0:sa!==undefined?1:2,cb=!isNaN(nb)?0:sb!==undefined?1:2;if(ca!==cb)return ca-cb;return va.localeCompare(vb)});b.forEach(function(x){c.appendChild(x)})});
       var origATC=window.addProductToCart;
@@ -8799,7 +8851,33 @@ async function loadRelatedProducts(currentProduct, t) {
         if(origATC)origATC.apply(this,arguments);
       };
       selectedAttributes={};document.querySelectorAll('.variant-option').forEach(function(b){b.classList.remove('selected','disabled','out-of-stock');b.disabled=false});
-      _uv();_upd();
+      // Auto-select any variant group that only has one possible value, so a
+      // shopper choosing the remaining options gets a fully-matched variant
+      // (image/SKU/price update) instead of being silently blocked because a
+      // single-option dimension was left implicitly unselected.
+      function _autoSelectSingles(){
+        document.querySelectorAll('.variant-group').forEach(function(grp){
+          var ak=grp.getAttribute('data-group');
+          if(!ak||ak==='variant')return;
+          if(grp.querySelector('.variant-option.selected'))return;
+          var btns=Array.prototype.slice.call(grp.querySelectorAll('.variant-option')).filter(function(b){
+            return b.getAttribute('data-attr')&&b.getAttribute('data-value')&&!b.classList.contains('disabled')&&!b.classList.contains('out-of-stock');
+          });
+          if(btns.length!==1)return;
+          var btn=btns[0],av=btn.getAttribute('data-value');
+          btn.classList.add('selected');
+          selectedAttributes[ak]=av;
+          var sp=grp.querySelector('.variant-selected-value');
+          if(sp)sp.textContent=btn.getAttribute('data-display-value')||av;
+        });
+      }
+      _autoSelectSingles();
+      _uv();
+      // Re-run after availability has been recomputed: a multi-option group may
+      // have collapsed to a single non-disabled choice once cross-group stock
+      // constraints were applied.
+      _autoSelectSingles();
+      _upd();
     }
 
     if(document.readyState==='complete'){setTimeout(fixVariantSelection,100)}else{window.addEventListener('load',function(){setTimeout(fixVariantSelection,100)})}
